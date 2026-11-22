@@ -8,6 +8,7 @@ import {home,mapPage,gallery,explore} from './pages/overview.js';
 const tourSteps=[
  {route:'home',titleAr:'المشكلة والحل',titleEn:'The problem and solution',descAr:'نحتاج أكثر من الأرشفة: رصد الأولويات وربط المعرفة بالتعلم الحقيقي.',descEn:'Safeguarding takes more than archiving: assess needs and connect knowledge to living learning.'},
  {route:'government/assessment',titleAr:'الحكومة تشخّص',titleEn:'Government diagnoses',descAr:'غيّر المؤشرات وشاهد أولوية المراجعة والعوامل المرتبطة.',descEn:'Change illustrative inputs to see the assessment respond.'},
+ {route:'government/review',titleAr:'من التقييم إلى اقتراح تدخل',titleEn:'From assessment to a proposed action',descAr:'راجع أسباب الأولوية والأدلة المطلوبة والتدخل المقترح وكيفية متابعة أثره.',descEn:'See what drives the priority, what evidence to check, and how to follow up on the proposed pilot.'},
  {route:'government/documentation',titleAr:'خبراء وممارسون يتحققون',titleEn:'Experts and practitioners verify',descAr:'شاهد كيف يُراجع نموذج المعرفة قبل استخدامه في التعليم.',descEn:'Review a fictional record and its demonstration approval workflow.'},
  {route:'pearl',titleAr:'الزائر يعيش التجربة',titleEn:'Tourist tries the simulation',descAr:'ابدأ الرحلة؛ اختر لغة المرشد، ثم اجمع المحار افتراضياً.',descEn:'Choose guide language, board the vessel, then collect simulated oysters.'},
  {route:'youth',titleAr:'التعلّم يستمر خارج VR',titleEn:'Learning continues beyond VR',descAr:'شاهد كيف تظهر ورشة مقترحة ومسار انتقال المهارة.',descEn:'Explore a proposed workshop and a learner pathway.'},
