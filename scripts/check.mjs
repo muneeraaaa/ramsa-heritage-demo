@@ -9,3 +9,4 @@ const html=readFileSync(resolve(root,'index.html'),'utf8');
 if(!html.includes('./src/app.js')){console.error('Incorrect module entrypoint');failures++}
 for(let i=1;i<=7;i++)if(!existsSync(resolve(root,`assets/future-visions/vision-${i}.webp`))){console.error('MISSING concept:',i);failures++}
 console.log(`${files.length+7} presence/syntax checks; failures: ${failures}`);if(failures)process.exit(1);
+execFileSync(process.execPath, [resolve(root, 'scripts/check-routes.mjs')], {stdio: 'inherit'});
