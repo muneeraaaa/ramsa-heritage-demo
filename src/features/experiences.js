@@ -2,13 +2,12 @@
    Browser simulations only: no headset, no real booking, no live data. Historical/craft
    explanations are simplified and flagged for specialist and practitioner review. */
 import {state,s,content,practice,pt,btn,placeholder,photo,ahref} from '../shared.js';
-import {pageHero} from '../components/ui.js';
+import {pageHero,video} from '../components/ui.js';
 import {on,island,refresh,store,save,learnTerm,toast,speak,stopSpeech,reducedMotion,chip,meter,proposed} from './experience-kit.js';
 
 /* =====================================================================
    Shared bits
    ===================================================================== */
-function video(file,poster,caption){return `<div class="surface card"><div class="panel-title">${caption} <span class="badge gold">${s('فيديو توضيحي','Concept video')}</span></div><video class="video-frame" controls playsinline preload="metadata" poster="${photo('video/'+poster)}"><source src="${photo('video/'+file)}" type="video/mp4">${s('المتصفح لا يدعم عرض الفيديو.','Your browser cannot play this video.')}</video><div class="tiny-note" style="margin-top:10px">${s('فيديو من العرض الأصلي يوضح تجربة مقترحة، وليس نظام واقع افتراضي منتجاً.','Video extracted from the supplied presentation. A concept demonstration, not proof of deployed VR software.')}</div></div>`}
 const stepper=(labels,current,doneUpTo)=>`<ol class="xpb-steps" aria-label="${s('مراحل التجربة','Experience stages')}">${labels.map((l,i)=>`<li class="${i===current?'on':i<doneUpTo?'done':''}" ${i===current?'aria-current="step"':''}><b>${i<doneUpTo&&i!==current?'✓':i+1}</b>${l}</li>`).join('')}</ol>`;
 const riskNote=id=>{const p=practice(id);return `<div class="tiny-note" style="margin-top:8px">${s('مؤشر هشاشة توضيحي في لوحة الجهات','Illustrative vulnerability score on the government dashboard')}: <b>${p.risk}/100</b> — <button class="btn btn-outline btn-small" data-action="choose-practice" data-id="${id}">${s('افتح التقييم','Open assessment')}</button></div>`};
 on('go-learn',d=>{state.lastLearn=d.id;state.youthProgress=Math.max(state.youthProgress,2);try{localStorage.setItem('ramsa-youth-progress',JSON.stringify(state.youthProgress))}catch{}location.hash='/youth'});

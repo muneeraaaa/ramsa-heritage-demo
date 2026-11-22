@@ -20,7 +20,7 @@ export function refresh() {
     const el = document.getElementById(id);
     if (el) el.innerHTML = render();
   }
-  if (key) { const again = document.querySelector(`[data-focus="${CSS.escape(key)}"]`); if (again) again.focus({preventScroll: true}); }
+  if (key && typeof CSS !== 'undefined') { const again = document.querySelector(`[data-focus="${CSS.escape(key)}"]`); if (again) again.focus({preventScroll: true}); }
 }
 
 /* ---------- persistence (demo progress only, never personal data) ---------- */
@@ -45,7 +45,7 @@ export function speak(text, lang) {
   speechSynthesis.speak(u);
 }
 export function stopSpeech() { if ('speechSynthesis' in window) speechSynthesis.cancel(); }
-export const reducedMotion = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+export const reducedMotion = () => typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- events ---------- */
 document.addEventListener('click', e => {
@@ -70,7 +70,7 @@ document.addEventListener('keydown', e => {
   const fn = handlers[host.dataset.xpKeys];
   if (fn && fn(e.key)) e.preventDefault();
 });
-window.addEventListener('hashchange', stopSpeech);
+document.addEventListener('click', e => { if (e.target.closest && e.target.closest('a[href^="#/"]')) stopSpeech(); });
 
 /* ---------- small shared view helpers ---------- */
 export const chip = (label, on = false) => `<span class="xpb-chip ${on ? 'on' : ''}">${on ? '✓ ' : ''}${label}</span>`;
@@ -207,6 +207,6 @@ const css = `
 @media(max-width:500px){.xpb-content{padding:14px}.xpb-scene,.xpb-content{min-height:720px}.xpb-hotspot{width:40px;height:40px}.xpb-dive .hint{display:none}.xpb-oyster{width:52px;height:40px}}
 @media(prefers-reduced-motion:reduce){.xpb-island *{animation:none!important}}
 `;
-if (!document.getElementById('xpb-style')) {
+if (typeof document.createElement === 'function' && document.head && !document.getElementById('xpb-style')) {
   const tag = document.createElement('style'); tag.id = 'xpb-style'; tag.textContent = css; document.head.appendChild(tag);
 }
