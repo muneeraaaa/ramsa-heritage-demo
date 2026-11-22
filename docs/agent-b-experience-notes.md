@@ -1,6 +1,6 @@
 # Agent B (Claude) — visitor, VR, youth & artisan experiences
 
-Branch: `feat/claude-experience`. Owned files changed: `src/features/experiences.js`, `src/features/community.js`, new `src/features/experience-kit.js`, this note.
+Branch: `feat/claude-experience`. Owned files changed: `src/features/experiences.js`, `src/features/community.js`, new `src/features/experience-kit.js`, this note. Shared: 4 marker lines in `scripts/check-routes.mjs`.
 
 ## How the interactive pages work without touching shared routing
 `src/app.js` owns every `data-action`. To avoid adding new actions there, Agent B pages use **islands**:
@@ -28,10 +28,10 @@ Skill selection, five-step pathway (Discover → Try virtually → Express inter
 ## Artisan (`#/artisan`)
 Tabs: fictional sample profiles; knowledge contribution with usage permission (public / learning-only / restricted); cultural review workflow (received → specialist review → practitioner approves representation → ready for learning, with "request changes" and withdraw); workshop proposals that appear in the youth portal; illustrative opportunities with a fair-benefit principle.
 
-## Not changed / needs integrator or Agent A
-- `src/features/government.js` uses `ahref()` without importing it → some government views throw `ReferenceError`.
-- `src/pages/overview.js` (gallery) calls `video()`, which is not defined there → `#/gallery` throws.
-- Layout restore and the one-token `weaving:weave` fix in `src/app.js` are separate commits on this branch (see PR).
+## Integration with main (after Agent A's merged PRs #1–#3, #5)
+- Main now has the restored layout, the `weaving:weave` render fix, `ahref` imports and a shared `video()` in `src/components/ui.js`; Agent B pages use that shared helper.
+- `scripts/check-routes.mjs` markers for `pearl`, `weaving`, `youth`, `artisan` point to the redesigned `data-xp` controls.
+- `experience-kit.js` is safe to import in the node route-check stub (no DOM-only APIs at load).
 
 ## Content caveats
 Terms and descriptions are simplified and flagged for review by specialists and practitioners before public use. Narration uses device voices, not recorded Emirati narration. Nothing here is a booking, a real workshop, a real person or a government decision.
