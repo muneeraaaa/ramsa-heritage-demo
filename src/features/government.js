@@ -7,6 +7,7 @@ function govSidebar() {
     ['inventory', s('الجرد', 'Inventory')],
     ['assessment', s('التقييم', 'Assessment')],
     ['interventions', s('التدخلات', 'Interventions')],
+    ['review', s('موجز المراجعة', 'Decision brief')],
     ['documentation', s('مراجعة المعرفة', 'Knowledge review')],
     ['impact', s('قياس الأثر', 'Impact')],
   ];
@@ -37,6 +38,7 @@ function govPanel() {
     case 'inventory': return govInventory();
     case 'assessment': return govAssessment();
     case 'interventions': return govInterventions();
+    case 'review': return govDecisionBrief();
     case 'documentation': return govDocumentation();
     case 'impact': return impact();
     default: return govOverview();
@@ -188,8 +190,7 @@ if (typeof document !== 'undefined') {
   });
 }
 
-function govAssessment() {
-  const selected = practice(state.practice);
+function assessmentSummary() {
   const factors = riskFactors();
   const total = factors.reduce((sum, factor) => sum + factor.contribution, 0);
   const score = Math.round(total / 100);
@@ -198,6 +199,12 @@ function govAssessment() {
     [40, 'warning', s('أولوية مراجعة متوسطة', 'Moderate review priority')],
     [0, 'good', s('أولوية مراجعة منخفضة', 'Lower review priority')],
   ].find(([min]) => score >= min);
+  return {factors, total, score, badge, priority};
+}
+
+function govAssessment() {
+  const selected = practice(state.practice);
+  const {factors, total, score, badge, priority} = assessmentSummary();
   return `
     <div class="surface card">
       <h2 class="panel-title">${s('تقييم قابل للتفسير', 'Explainable assessment')}</h2>
@@ -268,7 +275,47 @@ function govInterventions() {
             </div>`).join('')}
         </div>` : `
         <p>${s('جميع الفجوات في هذا السيناريو تساوي صفراً. تحقّق من الأدلة مع الممارسين عند المراجعة الدورية.', 'All gaps in this scenario are zero. Confirm the evidence with practitioners during routine review.')}</p>`}
-      ${ahref('government/documentation', s('افتح سجل مراجعة المعرفة', 'Open the knowledge review record'), 'btn btn-outline')}
+      ${ahref('government/review', s('افتح موجز المراجعة', 'Open decision brief'), 'btn btn-primary')}
+    </div>`;
+}
+
+function govDecisionBrief() {
+  const selected = practice(state.practice);
+  const {factors, score, badge, priority} = assessmentSummary();
+  const evidence = evidenceLevels[evidenceByPractice.get(selected.id) ?? 'unreviewed'];
+  const drivers = factors.filter(factor => factor.contribution > 0).slice(0, 2);
+  const lead = drivers[0];
+  return `
+    <div class="surface card">
+      <h2 class="panel-title">${s('موجز قرار صون التراث', 'Safeguarding decision brief')}</h2>
+      <h3>${pt(selected)}</h3>
+      <p class="muted">${s('يلخّص هذا الموجز السيناريو الحالي للمراجعة مع الممارسين والمختصين. جميع القيم افتراضية.', 'Use this summary of the current scenario to discuss next steps with practitioners and specialists. All values are hypothetical.')}</p>
+      <div class="split">
+        <div class="surface card">
+          <h3>${s('مبررات الأولوية', 'Why this priority')}</h3>
+          <p><span class="badge ${badge}">${priority}</span> <strong><bdi>${score}/100</bdi></strong></p>
+          ${drivers.length ? `
+            <ul>${drivers.map(factor => `<li>${factor.n} · <bdi>${points(factor.contribution)}</bdi> ${s('نقطة', 'pts')}</li>`).join('')}</ul>` : `
+            <p>${s('لم تُسجّل فجوات في هذا السيناريو.', 'No gaps were entered for this scenario.')}</p>`}
+          ${ahref('government/assessment', s('عدّل المؤشرات', 'Edit assessment'), 'btn btn-outline btn-small')}
+        </div>
+        <div class="surface card">
+          <h3>${s('ما الذي يحتاج إلى مراجعة؟', 'What needs review?')}</h3>
+          <p><strong>${s(...evidence.label)}</strong></p>
+          <p>${s(...evidence.guidance)}</p>
+          <p>${lead ? s(...lead.evidence) : s('راجع المؤشرات دورياً مع الممارسين وحدّد موعد المتابعة.', 'Review the indicators with practitioners and agree on a follow-up date.')}</p>
+        </div>
+      </div>
+      ${lead ? `
+        <div class="surface card" style="margin-top:18px">
+          <h3>${s('تدخل مقترح للمناقشة', 'Pilot to discuss')} · ${lead.rec}</h3>
+          <p>${s(...lead.pilot)}</p>
+          <p><strong>${s('ما الذي سنقيسه؟', 'What would we track?')}</strong> ${s(...lead.measure)}</p>
+        </div>` : ''}
+      <div class="vr-controls" style="margin-top:18px">
+        ${ahref('government/documentation', s('افتح سجل المراجعة التوضيحي', 'Open sample review record'), 'btn btn-outline')}
+        ${ahref('government/impact', s('عرض مؤشرات الأثر', 'View impact measures'), 'btn btn-outline')}
+      </div>
     </div>`;
 }
 
@@ -299,6 +346,7 @@ function govDocumentation() {
           <p role="status"><span class="badge ${state.approved ? 'good' : 'warning'}">${status}</span></p>
           ${btn('approve', state.approved ? s('أعد حالة المراجعة', 'Reset simulated review') : s('حاكِ اجتياز المراجعة', 'Simulate passing review'), 'btn btn-primary')}
           <p class="tiny-note">${s('هذا الزر يغيّر حالة العرض فقط؛ الموافقة الفعلية يقررها أصحاب المعرفة والمختصون.', 'This action updates the demo status. Real consent and approval come from knowledge holders and specialists.')}</p>
+          ${ahref('government/impact', s('تابع إلى قياس الأثر', 'Continue to impact measures'), 'btn btn-outline')}
         </div>
       </div>
     </div>`;
